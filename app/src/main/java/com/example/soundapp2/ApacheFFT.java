@@ -1,5 +1,8 @@
 package com.example.soundapp2;
 
+import com.example.soundapp2.Spectrum;
+import com.example.soundapp2.WindowFunction;
+
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.transform.DftNormalization;
 import org.apache.commons.math3.transform.FastFourierTransformer;
@@ -244,7 +247,7 @@ public class ApacheFFT {
         this.windowFunction = window;
         this.samplingrate = samplingrate;
 
-        int actual_length = 2048;
+        int actual_length = 8192;
         int valid_length = FFTUtil.nextPowerOf2(actual_length);
         double[] reshaped = new double[valid_length];
         for (int i = 0; i < reshaped.length; i++) {

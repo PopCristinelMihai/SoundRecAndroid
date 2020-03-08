@@ -1,5 +1,7 @@
 package com.example.soundapp2;
 
+import com.example.soundapp2.WindowFunction;
+
 class HanningWindow extends WindowFunction {
     /**
      * Calculates and returns the value of the window function at position i.

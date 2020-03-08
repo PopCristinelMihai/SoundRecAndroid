@@ -7,24 +7,20 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-//import javax.sound.sampled.AudioInputStream;
-//import javax.sound.sampled.AudioSystem;
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
 
-import org.apache.commons.math3.complex.Complex;
-import org.apache.commons.math3.transform.DftNormalization;
-import org.apache.commons.math3.transform.FastFourierTransformer;
+
 
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+
 
 public class FFTActivity extends AppCompatActivity {
     private static final String TAG ="";
-    private FastFourierTransformer fft;
     private long myDataSize;
-    private Complex fftArray;
     private String myPath;
     private long myChunkSize;
     private long mySubChunk1Size;
@@ -34,27 +30,26 @@ public class FFTActivity extends AppCompatActivity {
     private long myByteRate;
     private int myBlockAlign;
     private int myBitsPerSample;
-    private double[] imag;
-    //private long myDataSize;
 
-    //AudioInputStream audioInputStream;
+
     ApacheFFT apacheFFT=new ApacheFFT();
-    int totalFramesRead=0;
     File fileIn = new File(Environment.getExternalStorageDirectory().getPath()+"/"+"SuneteAplicatie"+"/"+"test"+".wav");
     DataInputStream inFile=null;
     public byte[] myData;
-   // private long myChunkSize;
 
     WindowFunction w = new HanningWindow();
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-        //wavIo wave= readWavBytes();
+        setContentView(R.layout.activity_fft);
         byte[] tmpLong=new byte[4];
         byte[] tmpInt = new byte[2];
+
+
 
         try{
             inFile= new DataInputStream(new FileInputStream(fileIn));
@@ -116,9 +111,7 @@ public class FFTActivity extends AppCompatActivity {
 
 
             Log.i("TAG","MYYYYYY DAAAAAAAAAAATAAAAAA SIIIIIIZE ISSSSSS   "+ myDataSize);
-            // read the data chunk
-            //myData = new byte[(int)myDataSize];
-            //inFile.read(myData);
+
 
 
 
@@ -130,9 +123,9 @@ public class FFTActivity extends AppCompatActivity {
                //Log.i("TAG","ASTA E SHORT VALLLLLLLLLL" + val);
                dataNew[i]=(double) val;
            }
-            for(int j=0;j<dataNew.length;j++) {
-                Log.i("TAG", "MY DATA IS HERE" + dataNew[j]);
-            }
+            //for(int j=0;j<dataNew.length;j++) {
+            //    Log.i("TAG", "MY DATA IS HERE" + dataNew[j]);
+            //}
 
             Log.i("TAG","ASTA E DIMENSIUNEA DATELOR " +myDataSize);
             Log.i("TAG","ASTA E DIMENSIUNEA LA DATA PRELEVATA" + dataNew.length);
@@ -161,27 +154,38 @@ public class FFTActivity extends AppCompatActivity {
             }
 
 
+            GraphView graph=(GraphView) findViewById(R.id.graph);
 
             apacheFFT.forward(arrayInterest,(float)44100,w);
             Spectrum s=apacheFFT.getMagnitudeSpectrum();
             double[] freq=s.array();
             double[] array=new double[freq.length];
+
+            DataPoint[] dataPoints = new DataPoint[4096];
             for(int i=0;i<freq.length;i++)
             {
                 array[i]=(10*Math.log10(Math.abs(freq[i])));
+                dataPoints[i]=new DataPoint(i,Math.abs(array[i]));
+
             }
+
+            LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(dataPoints);
+            graph.addSeries(series);
 
 for(int i=0;i<array.length;i++)
             Log.i("TAG","ASTEA SUNT FRECVENTELE" + Math.abs(array[i]));
 
             Log.i("TAG","MARIMEA LA FRECVENTE" + freq.length);
 
+
+
+
+
         }catch(Exception e){
             System.out.println(e.getMessage());
         }
 
-
-
+        ;
 
     }
 
