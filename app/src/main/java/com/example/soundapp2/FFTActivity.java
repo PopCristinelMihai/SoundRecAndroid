@@ -23,7 +23,6 @@ import java.io.FileInputStream;
 public class FFTActivity extends AppCompatActivity {
     private static final String TAG ="";
     private long myDataSize;
-    private String myPath;
     private long myChunkSize;
     private long mySubChunk1Size;
     private int myFormat;
