@@ -1,6 +1,8 @@
 
 package com.example.soundapp2;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -31,12 +33,13 @@ public class FFTActivity extends AppCompatActivity {
     private int myBlockAlign;
     private int myBitsPerSample;
 
+    SharedPreferences sharedPreferences;
 
     ApacheFFT apacheFFT=new ApacheFFT();
-    File fileIn = new File(Environment.getExternalStorageDirectory().getPath()+"/"+"SuneteAplicatie"+"/"+"test"+".wav");
+    File fileIn ;//= new File(Environment.getExternalStorageDirectory().getPath()+"/"+"SuneteAplicatie"+"/"+"test"+".wav");
+
     DataInputStream inFile=null;
     public byte[] myData;
-
     WindowFunction w = new HanningWindow();
 
 
@@ -48,11 +51,15 @@ public class FFTActivity extends AppCompatActivity {
         setContentView(R.layout.activity_fft);
         byte[] tmpLong=new byte[4];
         byte[] tmpInt = new byte[2];
-
-
+        File temp;
+        sharedPreferences=getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+        String filepath=sharedPreferences.getString("filepath",null);
 
         try{
+
+            fileIn=new File(filepath);
             inFile= new DataInputStream(new FileInputStream(fileIn));
+
 
 
             String chunkID = "" + (char)inFile.readByte() + (char)inFile.readByte() + (char)inFile.readByte() + (char)inFile.readByte();

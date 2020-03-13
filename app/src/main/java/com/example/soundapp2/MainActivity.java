@@ -3,6 +3,7 @@ package com.example.soundapp2;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioFormat;
 import android.media.MediaRecorder;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import android.media.AudioRecord;
+import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private int bufferSize=0;
     private static final String rawFile="rawFile.raw";
     Button record,stop_record;
+    EditText editText;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,14 +81,32 @@ public class MainActivity extends AppCompatActivity {
 
     public String getFilename()
     {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref",0);
+        SharedPreferences.Editor editor=pref.edit();
+        editText = findViewById(R.id.editText);
+        int counter=1;
         String path=Environment.getExternalStorageDirectory().getAbsolutePath();
-        File file=new File(path,"SuneteAplicatie");
+        File file=new File(path,"SuneteAplicatie"+"/"+editText.getText().toString().toUpperCase());
+
+
+
 
         if(!file.exists()){
             file.mkdirs();
         }
-        Log.i("TAG",file.getAbsolutePath()+"/"+"test"+".wav");
-        return(file.getAbsolutePath()+"/"+"test"+".wav");
+
+        File file2=new File(file.getAbsolutePath()+"/"+editText.getText()+counter+".wav");
+        while (file2.exists())
+        {
+            counter++;
+            file2=new File(file.getAbsolutePath()+"/"+editText.getText()+counter+".wav");
+        }
+
+
+        Log.i("TAG",file.getAbsolutePath()+"/"+editText.getText()+".wav");
+        editor.putString("filepath",Environment.getExternalStorageDirectory().getPath()+"/"+"SuneteAplicatie"+"/"+editText.getText().toString().toUpperCase()+"/"+editText.getText().toString().toUpperCase()+counter+".wav");
+        editor.commit();
+        return(file.getAbsolutePath()+"/"+editText.getText().toString().toUpperCase()+counter+".wav");
     }
 
 
