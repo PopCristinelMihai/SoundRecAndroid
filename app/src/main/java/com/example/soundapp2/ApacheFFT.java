@@ -247,7 +247,7 @@ public class ApacheFFT {
         this.windowFunction = window;
         this.samplingrate = samplingrate;
 
-        int actual_length = 8192;
+        int actual_length = data.length;
         int valid_length = FFTUtil.nextPowerOf2(actual_length);
         double[] reshaped = new double[valid_length];
         for (int i = 0; i < reshaped.length; i++) {

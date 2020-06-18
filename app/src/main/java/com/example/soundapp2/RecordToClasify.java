@@ -5,51 +5,53 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioFormat;
+import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import net.sf.javaml.classification.Classifier;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import android.media.AudioRecord;
-import android.widget.EditText;
-import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+public class RecordToClasify extends AppCompatActivity {
 
     boolean isRecording=false;
     AudioRecord recorder=null;
     Thread recorderThread=null;
     private static final int bitsPerSample = 16;
     private static final int nChannels = 1;
-    private static final int sampleRate = 44100;
+    private static final int sampleRate= 44100;
     private static final int aEncoding = AudioFormat.ENCODING_PCM_16BIT;
     private int bufferSize=0;
     private static final String rawFile="rawFile.raw";
     Button record,stop_record;
     EditText editText;
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        bufferSize=AudioRecord.getMinBufferSize(sampleRate,nChannels,aEncoding);
-        record=findViewById(R.id.record);
-        stop_record=findViewById(R.id.stop_record);
-        setClick();
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_record_to_clasify);
+        bufferSize=AudioRecord.getMinBufferSize(sampleRate,nChannels,aEncoding);
+        record=findViewById(R.id.button_record_classify);
+        stop_record=findViewById(R.id.button_stop_record_classify);
+        setClick();
     }
 
     private void setClick()
     {
-        ((Button)findViewById(R.id.record)).setOnClickListener(btnClick);
-        ((Button)findViewById(R.id.stop_record)).setOnClickListener(btnClick);
+        ((Button)findViewById(R.id.button_record_classify)).setOnClickListener(btnClick);
+        ((Button)findViewById(R.id.button_stop_record_classify)).setOnClickListener(btnClick);
     }
-
 
     public void startRecord() {
         recorder=new AudioRecord(MediaRecorder.AudioSource.MIC,sampleRate,nChannels,aEncoding,AudioRecord.getMinBufferSize(sampleRate,nChannels,aEncoding));
@@ -68,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
     public String getTempFilename()
     {
-        String path=Environment.getExternalStorageDirectory().getPath();
+        String path= Environment.getExternalStorageDirectory().getPath();
         File file=new File(path,"SuneteAplicatie");
         if(!file.exists()){
             file.mkdirs();
@@ -82,35 +84,16 @@ public class MainActivity extends AppCompatActivity {
 
     public String getFilename()
     {
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref",0);
-        SharedPreferences.Editor editor=pref.edit();
-        editText = findViewById(R.id.editText);
-        int counter=1;
         String path=Environment.getExternalStorageDirectory().getAbsolutePath();
-        File file=new File(path,"SuneteAplicatie"+"/"+editText.getText().toString().toUpperCase());
+        File file=new File(path,"SuneteAplicatie"+"/");
 
-
-
-
-        if(!file.exists()){
-            file.mkdirs();
+        if(file.exists()) {
+            file.delete();
         }
 
-        File file2=new File(file.getAbsolutePath()+"/"+editText.getText()+counter+".wav");
-        while (file2.exists())
-        {
-            counter++;
-            file2=new File(file.getAbsolutePath()+"/"+editText.getText()+counter+".wav");
-        }
-
-
-        Log.i("TAG",file.getAbsolutePath()+"/"+editText.getText()+".wav");
-        editor.putString("filepath",Environment.getExternalStorageDirectory().getPath()+"/"+"SuneteAplicatie"+"/"+editText.getText().toString().toUpperCase()+"/"+editText.getText().toString().toUpperCase()+counter+".wav");
-        editor.commit();
-        return(file.getAbsolutePath()+"/"+editText.getText().toString().toUpperCase()+counter+".wav");
+        Log.i("TAG",Environment.getExternalStorageDirectory().getAbsolutePath()+"/SuneteAplicatie"+"/"+"ClassifyThis"+".wav");
+        return(Environment.getExternalStorageDirectory().getAbsolutePath()+"/SuneteAplicatie"+"/"+"ClassifyThis"+".wav");
     }
-
-
 
     public void writeToFile()
     {
@@ -121,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         try{
             os=new FileOutputStream(filename);
         }catch (FileNotFoundException fe){
-         fe.printStackTrace();
+            fe.printStackTrace();
         }
 
         int read=0;
@@ -143,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
     private void stopRecording()
     {
         isRecording=false;
@@ -241,9 +225,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void openFFTActivity()
+    public void openClassifierctivity()
     {
-        Intent intent = new Intent(this,FFTActivity.class);
+        Intent intent = new Intent(this, ClassifierData.class);
         startActivity(intent);
     }
 
@@ -251,20 +235,20 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v){
             switch (v.getId()){
-                case R.id.record:{
+                case R.id.button_record_classify:{
                     Log.i("TAG","Started Recording");
 
                     startRecord();
 
                     break;
                 }
-                case R.id.stop_record:{
+                case R.id.button_stop_record_classify:{
                     Log.i("TAG","Stoped Recording");
 
                     stopRecording();
                     Toast toast=Toast.makeText(getApplicationContext(),"Stopped recording",Toast.LENGTH_SHORT);
                     toast.show();
-                    //openFFTActivity();
+                    openClassifierctivity();
                     break;
                 }
 
@@ -272,7 +256,4 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-
-
 }
-
