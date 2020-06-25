@@ -38,7 +38,7 @@ class RectangularWindow extends WindowFunction {
     }
     public final double normalization(int length) {
         return 1.0;
-    }
+}
 
 
     /**

@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.opencsv.CSVWriter;
@@ -15,10 +14,11 @@ import java.io.FileWriter;
 import java.util.Arrays;
 
 import net.sf.javaml.classification.Classifier;
-import net.sf.javaml.classification.KNearestNeighbors;
 import net.sf.javaml.core.Dataset;
 import net.sf.javaml.core.Instance;
 import net.sf.javaml.tools.data.FileHandler;
+
+import be.abeel.io.Serial;
 
 public class ClassifierData extends AppCompatActivity {
 
@@ -73,33 +73,20 @@ public class ClassifierData extends AppCompatActivity {
 
             writer.close();
 
-            Dataset data = FileHandler.loadDataset(new File(Environment.getExternalStorageDirectory().getPath()+"/SuneteAplicatie"+"/"+"data.csv"),2205,",");
 
-            Classifier knn = new KNearestNeighbors(3);
-            knn.buildClassifier(data);
+
+            Classifier model = loadModel(Environment.getExternalStorageDirectory().getPath()+"/SuneteAplicatie"+"/"+"Model.dat");
+
+
 
             Dataset dataForClassification =  FileHandler.loadDataset(new File(Environment.getExternalStorageDirectory().getPath()+"/SuneteAplicatie"+"/"+"classify_data.csv"),",");
 
-            int correct = 0 , wrong=0;
             for (Instance  inst :dataForClassification ){
-                Object predictedClassValue = knn.classify(inst);
-                Object realClassValue = inst.classValue();
-               // if(predictedClassValue.equals(realClassValue))
-               //     correct++;
-               // else
-               //     wrong++;
+                Object predictedClassValue = model.classify(inst);
 
-               // System.out.println("Correct : "+realClassValue+ "  Predicted : "+predictedClassValue);
-                Log.e("TEST","A INTRAT AICI?");
-                Log.e("VALOARE",predictedClassValue.toString());
                 textClass=findViewById(R.id.textClass);
                 textClass.setText(predictedClassValue.toString());
             }
-
-
-
-            //System.out.println("Correct predictions : " + correct);
-            //System.out.println("Wrong predictions : "+wrong);
 
 
         }catch (Exception e){
@@ -112,6 +99,12 @@ public class ClassifierData extends AppCompatActivity {
         WavIO wave = new WavIO(path);
         wave.read();
         return wave;
+    }
+
+
+    public Classifier loadModel(String fileName){
+        Classifier model = (Classifier) Serial.load(fileName);
+        return model;
     }
 
     static short twoBytesToShort(byte b1, byte b2) {

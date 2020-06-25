@@ -35,7 +35,6 @@ public class RecordToClasify extends AppCompatActivity {
     private int bufferSize=0;
     private static final String rawFile="rawFile.raw";
     Button record,stop_record;
-    EditText editText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +50,7 @@ public class RecordToClasify extends AppCompatActivity {
     {
         ((Button)findViewById(R.id.button_record_classify)).setOnClickListener(btnClick);
         ((Button)findViewById(R.id.button_stop_record_classify)).setOnClickListener(btnClick);
+        ((Button)findViewById(R.id.developer)).setOnClickListener(btnClick);
     }
 
     public void startRecord() {
@@ -231,6 +231,12 @@ public class RecordToClasify extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void openDeveloperActivity()
+    {
+        Intent intent = new Intent(this,MainActivity.class);
+        startActivity(intent);
+    }
+
     private View.OnClickListener btnClick=new View.OnClickListener(){
         @Override
         public void onClick(View v){
@@ -249,6 +255,12 @@ public class RecordToClasify extends AppCompatActivity {
                     Toast toast=Toast.makeText(getApplicationContext(),"Stopped recording",Toast.LENGTH_SHORT);
                     toast.show();
                     openClassifierctivity();
+                    break;
+                }
+
+                case R.id.developer:
+                {
+                    openDeveloperActivity();
                     break;
                 }
 

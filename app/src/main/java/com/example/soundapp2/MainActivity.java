@@ -17,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import android.media.AudioRecord;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String rawFile="rawFile.raw";
     Button record,stop_record;
     EditText editText;
+    CheckBox checkBox;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         bufferSize=AudioRecord.getMinBufferSize(sampleRate,nChannels,aEncoding);
         record=findViewById(R.id.record);
         stop_record=findViewById(R.id.stop_record);
+        checkBox=findViewById(R.id.checkBox);
         setClick();
 
     }
@@ -88,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
         int counter=1;
         String path=Environment.getExternalStorageDirectory().getAbsolutePath();
         File file=new File(path,"SuneteAplicatie"+"/"+editText.getText().toString().toUpperCase());
+        if(checkBox.isChecked())
+             file=new File(path,"SuneteAplicatie" + "/"+"TESTING"+"/"+editText.getText().toString().toUpperCase());
 
 
 
